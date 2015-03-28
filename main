@@ -1,0 +1,37 @@
+#!/usr/bin/env python
+
+__author__ = 'Philipp Bobek'
+__copyright__ = 'Copyright (C) 2015 Philipp Bobek'
+__license__ = 'Public Domain'
+__version__ = '1.0'
+
+import argparse
+from SlidingPuzzle.Board import Board
+from SlidingPuzzle.Solver import Solver
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Solving a Sliding Puzzle with different Algorithms.')
+    parser.add_argument('--version', action='version', version=__version__)
+    parser.add_argument('-v', '--verbose', action='store_false', dest='verbose',
+                        help='print full output messages [default]')
+    parser.add_argument('-s', '--solver', type=str, dest='solver', default='iterative_deepening',
+                        help='choose an algorithm for solving the puzzle: '
+                             'breadth_first_search, depth_first_search or iterative_deepening '
+                             '[default: iterative_deepening]')
+    parser.add_argument('-f', '--filename', type=argparse.FileType('a'), metavar='FILE', dest='file',
+                        help='write output to FILE')
+    parser.add_argument('-r', '--randomize', type=int, dest='randomize', default=16,
+                        help='number of random moves to initialize the puzzle [default: 16]')
+    args = parser.parse_args()
+
+    start_board = Board.make_random_board(args.randomize)
+    solver = Solver(args.verbose, args.file)
+
+    if args.solver == 'breadth_first_search':
+        solver.breadth_first_search([start_board])
+    elif args.solver == 'depth_first_search':
+        solver.depth_first_search(start_board)
+    elif args.solver == 'iterative_deepening':
+        solver.iterative_deepening(start_board)
+    else:
+        parser.parse_args(['--help'])
